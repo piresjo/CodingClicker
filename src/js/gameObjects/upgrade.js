@@ -17,5 +17,6 @@ export default class Upgrade {
         this.clickerIncrement = clickerIncrement;
         this.clickerIncreaseFactor = clickerIncreaseFactor;
         this.bought = bought;
+        this.posted = false;
     }
 }
