@@ -4,23 +4,79 @@ import { FULL_UPGRADE_OBJECT } from './gameObjects/upgradeConstants.js';
 
 // ToDo - Complete Redesign Of How Updates Are Handled
 
+var engine = new ClickerEngine();
+
+var generateButtonMarkdown = function (upgradeName) {
+    const className = upgradeName.replaceAll(/\s/g, '') + 'UpgradeButton';
+    return (
+        `<tr><td><button class="${className}" disabled>` +
+        upgradeName +
+        '</button></td></tr>'
+    );
+};
+
+var unpackClassToGetName = function (upgradeClassName) {
+    console.log(upgradeClassName);
+    const upgradeButton = 'UpgradeButton';
+
+    return upgradeClassName.replace(upgradeButton, '');
+
+}
 
 var updateUpgradesList = function () {
-    $('.upgradeTable').empty();
-    var upgradesToAdd = engine.updateUpgradeList();
+    var upgrades = engine.updateUpgradeList();
+    console.log(upgrades);
+    const availableUpgrades = upgrades.makeAvailable;
+    const obtainableUpgrades = upgrades.makeObtainable;
+    const boughtUpgrades = upgrades.markBought;
 
-    upgradesToAdd.forEach((upgradeToAdd) => {
-        $('.upgradeTable').append(upgradeToAdd);
+    $(document).ready(function () {
+        console.log(
+            $('.upgradeTable').children('tr').children('td').children('button')
+        );
+
+        var tableData = $('.upgradeTable')
+            .children('tr')
+            .children('td')
+            .children('button');
+
+        console.log(tableData);
+        console.log(tableData.toArray());
+        var siteUpgrades = [];
+
+        if (tableData.length > 0) {
+            tableData.each( (num, tableRow) => {
+                console.log(tableRow);
+                const upgradeName = unpackClassToGetName($(tableRow).attr('class'));
+                siteUpgrades.push(upgradeName);
+                console.log(upgradeName);
+                if (!availableUpgrades.includes(upgradeName) && !obtainableUpgrades.includes(upgradeName)) {
+                    
+                }
+                console.log(tableRow);
+                if (!availableUpgrades.includes(upgradeName) && !obtainableUpgrades.includes(upgradeName)) {
+                    tableRow.prop("disabled", false);
+                }
+                
+            });
+        }
+
+        availableUpgrades.forEach((availableUpgrade) => {
+            if (!siteUpgrades.includes(availableUpgrade)) {
+                $('.upgradeTable').append(generateButtonMarkdown(availableUpgrade));
+            }
+        });
     });
 };
 
-var engine = new ClickerEngine();
-engine.startGame();
-updateUpgradesList();
-setInterval(() => {
-    engine.seconds += 1;
-    console.log(engine.seconds);
-}, 1000);
+$(document).ready(function () {
+    engine.startGame();
+    updateUpgradesList();
+    setInterval(() => {
+        engine.seconds += 1;
+        console.log(engine.seconds);
+    }, 1000);
+});
 
 $('.firstClicker').click(function () {
     const elementUpdateText = engine.onClick();
@@ -29,5 +85,4 @@ $('.firstClicker').click(function () {
         $('.firstClicker').text(elementUpdateText.clickerText);
     }
     updateUpgradesList();
-
 });

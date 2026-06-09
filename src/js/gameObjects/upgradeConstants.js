@@ -1,21 +1,21 @@
 import Upgrade from './upgrade.js';
 
-const DOUBLE_CLICKER_NAME = 'Double Clicker';
-const DOUBLE_CLICKER_DESCRIPTION = 'Has Clicker Add 2';
-const QUAD_CLICKER_NAME = 'Quad Clicker';
-const QUAD_CLICKER_DESCRIPTION = 'Has Clicker Add 4';
-const AVAILABLE = true;
-const NOT_AVAILABLE = false;
-const NOT_BAUGHT = false;
-const CLICKS_NEEDED_DOUBLE_CLICKER = 100;
-const CLICKS_NEEDED_QUAD_CLICKER = 200;
+export const DOUBLE_CLICKER_NAME = 'Double Clicker';
+export const DOUBLE_CLICKER_DESCRIPTION = 'Has Clicker Add 2';
+export const QUAD_CLICKER_NAME = 'Quad Clicker';
+export const QUAD_CLICKER_DESCRIPTION = 'Has Clicker Add 4';
+export const AVAILABLE = true;
+export const NOT_AVAILABLE = false;
+export const NOT_BAUGHT = false;
+export const CLICKS_NEEDED_DOUBLE_CLICKER = 100;
+export const CLICKS_NEEDED_QUAD_CLICKER = 200;
 
 export const DEFAULT_AVAILABLE_FUNCTION = function () {
     return true;
 };
 
-export const QUAD_CLICKER_FUNCTION = function () {
-    if (FULL_UPGRADE_OBJECT[DOUBLE_CLICKER_NAME].bought) {
+export const QUAD_CLICKER_FUNCTION = function (upgradeMap, clickerValue) {
+    if (upgradeMap.get(DOUBLE_CLICKER_NAME).bought) {
         if (clickerValue > 100) {
             return true;
         }
@@ -39,7 +39,7 @@ export const FULL_UPGRADE_OBJECT = {
         QUAD_CLICKER_NAME,
         QUAD_CLICKER_DESCRIPTION,
         QUAD_CLICKER_FUNCTION,
-        NOT_AVAILABLE,
+        AVAILABLE,
         CLICKS_NEEDED_QUAD_CLICKER,
         4,
         null,

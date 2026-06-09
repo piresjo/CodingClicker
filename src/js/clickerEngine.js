@@ -8,26 +8,54 @@ export default class ClickerEngine {
         this.clickerIncrement = 1;
         this.clicksPerSecond = 0;
         this.clickedFirstTime = false;
+        this.upgradeMap = new Map();
+        this.obtainableUpgradeList = [];
         this.boughtUpgradeList = [];
         this.availableUpgradeList = [];
         this.seconds = 0;
     }
 
     updateUpgradeList() {
-        var returnList = [];
-        this.availableUpgradeList.forEach((availableUpgrade) => {
-            console.log(availableUpgrade);
-            if (availableUpgrade.isAvailable && !availableUpgrade.posted) {
-                availableUpgrade.posted = true;
-                const className = availableUpgrade.name + 'Button';
-                var upgradeTableMarkup =
-                    `<tr><td><button class="${className}" disabled>` +
-                    availableUpgrade.name +
-                    '</button></td></tr>';
-                returnList.push(upgradeTableMarkup);
+        var listToMakeAvailable = [];
+        var listToMakeObtainable = [];
+        var listToMarkBought = [];
+        this.upgradeMap.forEach((upgradeObject, upgradeName) => {
+            console.log(upgradeObject);
+            console.log(upgradeName);
+            if (upgradeObject.isAvailable && !upgradeObject.bought) {
+                listToMakeAvailable.push(upgradeName);
+            }
+            if (
+                upgradeObject.isAvailable &&
+                !upgradeObject.bought &&
+                upgradeObject.clicksNeeded <= this.clickerValue
+            ) {
+                if (listToMakeAvailable.includes(upgradeName)) {
+                    listToMakeAvailable.splice(
+                        listToMakeAvailable.length - 1,
+                        1
+                    );
+                }
+                listToMakeObtainable.push(upgradeName);
+            }
+            if (upgradeObject.bought) {
+                if (listToMakeObtainable.includes(upgradeName)) {
+                    listToMakeObtainable.splice(
+                        listToMakeAvailable.length - 1,
+                        1
+                    );
+                }
+                listToMarkBought.push(upgradeName);
             }
         });
-        return returnList;
+        this.obtainableUpgradeList = listToMakeAvailable;
+        this.boughtUpgradeList = listToMakeObtainable;
+        this.availableUpgradeList = listToMarkBought;
+        return {
+            makeAvailable: listToMakeAvailable,
+            makeObtainable: listToMakeObtainable,
+            markBought: listToMarkBought,
+        };
     }
 
     checkToEnableUpgrades() {
@@ -52,9 +80,7 @@ export default class ClickerEngine {
         )) {
             console.log(`${upgradeName}: ${upgradeObject}`);
             console.log(upgradeObject);
-            if (upgradeObject.isAvailable) {
-                this.availableUpgradeList.push(upgradeObject);
-            }
+            this.upgradeMap.set(upgradeObject.name.replaceAll(/\s/g, ''), upgradeObject);
         }
     }
 
