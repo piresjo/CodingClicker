@@ -20,50 +20,49 @@ var unpackClassToGetName = function (upgradeClassName) {
     const upgradeButton = 'UpgradeButton';
 
     return upgradeClassName.replace(upgradeButton, '');
-
-}
+};
 
 var updateUpgradesList = function () {
     var upgrades = engine.updateUpgradeList();
-    console.log(upgrades);
     const availableUpgrades = upgrades.makeAvailable;
     const obtainableUpgrades = upgrades.makeObtainable;
     const boughtUpgrades = upgrades.markBought;
 
     $(document).ready(function () {
-        console.log(
-            $('.upgradeTable').children('tr').children('td').children('button')
-        );
-
         var tableData = $('.upgradeTable')
             .children('tr')
             .children('td')
             .children('button');
-
-        console.log(tableData);
-        console.log(tableData.toArray());
         var siteUpgrades = [];
 
         if (tableData.length > 0) {
-            tableData.each( (num, tableRow) => {
+            tableData.each((num, tableRow) => {
                 console.log(tableRow);
-                const upgradeName = unpackClassToGetName($(tableRow).attr('class'));
+                const upgradeName = unpackClassToGetName(
+                    $(tableRow).attr('class')
+                );
                 siteUpgrades.push(upgradeName);
                 console.log(upgradeName);
-                if (!availableUpgrades.includes(upgradeName) && !obtainableUpgrades.includes(upgradeName)) {
-                    
+                if (
+                    !availableUpgrades.includes(upgradeName) &&
+                    !obtainableUpgrades.includes(upgradeName)
+                ) {
                 }
                 console.log(tableRow);
-                if (!availableUpgrades.includes(upgradeName) && !obtainableUpgrades.includes(upgradeName)) {
-                    tableRow.prop("disabled", false);
+                if (
+                    !availableUpgrades.includes(upgradeName) &&
+                    obtainableUpgrades.includes(upgradeName)
+                ) {
+                    $(tableRow).prop('disabled', false);
                 }
-                
             });
         }
 
         availableUpgrades.forEach((availableUpgrade) => {
             if (!siteUpgrades.includes(availableUpgrade)) {
-                $('.upgradeTable').append(generateButtonMarkdown(availableUpgrade));
+                $('.upgradeTable').append(
+                    generateButtonMarkdown(availableUpgrade)
+                );
             }
         });
     });
@@ -76,13 +75,21 @@ $(document).ready(function () {
         engine.seconds += 1;
         console.log(engine.seconds);
     }, 1000);
-});
 
-$('.firstClicker').click(function () {
-    const elementUpdateText = engine.onClick();
-    $('.firstNumber').text(elementUpdateText.clickCountText);
-    if (elementUpdateText.clickerText !== null) {
-        $('.firstClicker').text(elementUpdateText.clickerText);
-    }
-    updateUpgradesList();
+    $('.firstClicker').click(function () {
+        const elementUpdateText = engine.onClick();
+        $('.firstNumber').text(elementUpdateText.clickCountText);
+        if (elementUpdateText.clickerText !== null) {
+            $('.firstClicker').text(elementUpdateText.clickerText);
+        }
+        updateUpgradesList();
+        console.log(
+            $('.upgradeTable').children('tr').children('td').children('button')
+        );
+    });
+
+    $('button').on('click', '.DoubleClickerUpgradeButton', function (event) {
+        console.log("PingPong");
+        console.log(event);
+    });
 });

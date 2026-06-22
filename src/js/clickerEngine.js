@@ -4,7 +4,7 @@ const SECOND_IN_MILLISECONDS = 1000;
 
 export default class ClickerEngine {
     constructor() {
-        this.clickerValue = 0;
+        this.clickerValue = 90;
         this.clickerIncrement = 1;
         this.clicksPerSecond = 0;
         this.clickedFirstTime = false;
@@ -22,7 +22,13 @@ export default class ClickerEngine {
         this.upgradeMap.forEach((upgradeObject, upgradeName) => {
             console.log(upgradeObject);
             console.log(upgradeName);
-            if (upgradeObject.isAvailable && !upgradeObject.bought) {
+            if (
+                upgradeObject.availableFunction(
+                    this.upgradeMap,
+                    this.clickerValue
+                ) &&
+                !upgradeObject.bought
+            ) {
                 listToMakeAvailable.push(upgradeName);
             }
             if (
@@ -80,7 +86,10 @@ export default class ClickerEngine {
         )) {
             console.log(`${upgradeName}: ${upgradeObject}`);
             console.log(upgradeObject);
-            this.upgradeMap.set(upgradeObject.name.replaceAll(/\s/g, ''), upgradeObject);
+            this.upgradeMap.set(
+                upgradeObject.name.replaceAll(/\s/g, ''),
+                upgradeObject
+            );
         }
     }
 
